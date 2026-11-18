@@ -1,0 +1,26 @@
+:root { color-scheme: dark; }
+.stApp { background: radial-gradient(ellipse at 92% 0%, #102b40 0%, #091322 38%, #091322 100%); color: #e4edf7; }
+html, body, .stApp { font-family: Inter, "Segoe UI", sans-serif; }
+[data-testid="stSidebar"] { background: #0c192a; border-right: 1px solid #20354b; }
+[data-testid="stMainBlockContainer"] { max-width: 1580px; padding-top: 4.5rem; padding-bottom: 3rem; }
+h1 { letter-spacing: -.045em; font-weight: 750 !important; }
+h2, h3 { letter-spacing: -.025em; }
+[data-testid="stCaptionContainer"] { color: #93aac2; }
+[data-testid="stMetric"] { background: linear-gradient(130deg, #11253a, #0e1d30); border-color: #253a51 !important; border-radius: 16px; padding: 1.2rem; }
+[data-testid="stMetricValue"] { color: #4ce2d1; font-weight: 650; }
+[data-testid="stMetricLabel"] { color: #a4b8cd; }
+[data-testid="stVerticalBlockBorderWrapper"] > div { border-color: #23384e !important; border-radius: 15px; }
+.hero { padding: 2.2rem 2.6rem; margin: 1rem 0 1.6rem; border: 1px solid #28516a; border-radius: 22px; background: linear-gradient(110deg, #103047, #112a3b 55%, #123e44); }
+.hero h2 { font-size: clamp(1.8rem, 3vw, 3rem); line-height: 1.15; margin: .9rem 0; color: #edf9ff; }
+.hero p { max-width: 800px; line-height: 1.75; color: #afcad9; }
+.pill { color: #5ce8d6; font-size: .72rem; letter-spacing: .15em; font-weight: 700; }
+.pipeline { padding: 1.4rem; background: #102337; border: 1px solid #254057; border-radius: 14px; line-height: 2.6; color: #c9deed; }
+.pipeline b { color: #35d8c6; padding: 0 .5rem; }
+.pending { color: #efbb70; }
+.brand { color: #e8fcff; font-size: 2rem; font-weight: 750; letter-spacing: -.06em; }
+.brand span { color: #36dacb; }
+.stButton > button { border-radius: 10px; transition: border-color .16s ease; }
+.stButton > button:hover { border-color: #32dece; }
+button:focus-visible, a:focus-visible { outline: 2px solid #59efdf !important; outline-offset: 3px; }
+@media (max-width: 700px) { .hero { padding: 1.4rem; } [data-testid="stMainBlockContainer"] { padding: 4rem 1rem 1rem; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
