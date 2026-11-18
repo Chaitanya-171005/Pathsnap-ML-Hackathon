@@ -145,7 +145,7 @@ The technology stack may evolve based on implementation requirements and measure
 
 ## Project Roadmap
 
-- [ ] Dataset exploration and visualisation
+- [x] Dataset exploration, validation and visualisation
 - [ ] Data preprocessing and candidate generation
 - [ ] Feature engineering and reference-route alignment
 - [ ] Baseline model implementation
@@ -174,9 +174,19 @@ All reported metrics and visualisations will be generated from actual experiment
 
 ## Installation and Execution
 
-Installation steps, dependency files, training commands and deployment instructions will be documented as the implementation progresses.
+Phase 1 uses Python 3.13. Obtain the original organiser dataset separately and put the trip folders in `data/raw/train/` and `data/raw/student_test/`. Keep all four files for each trip in its own zero-padded trip directory.
 
-The final repository will include instructions for reproducing experiments and running the application on two laptops.
+```bash
+python3.13 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m src.eda.run_eda --data-dir data/raw
+python -m pytest -q
+```
+
+The EDA command writes CSV and Markdown reports to `reports/eda/` and PNG plots and Folium maps to `visualizations/eda/` by default. Use `--report-dir` and `--visual-dir` to change the output locations. Use `--gap-seconds 5 10 30 60`, `--speed-mps 55` and `--map-road-limit 12000` to set the diagnostic thresholds and visual road-network cap explicitly. The supplied raw files, local guideline PDFs and outputs carrying exact trip coordinates are Git-ignored. The maps use network-loaded assets and basemap tiles.
+
+See the [Phase 1 handoff](docs/PHASE1_HANDOFF.md), [dataset schema](docs/DATASET_SCHEMA.md), [EDA findings](docs/EDA_FINDINGS.md) and [data contract](docs/DATA_CONTRACT.md).
 
 ## Academic Integrity
 
@@ -186,9 +196,9 @@ Relevant research papers will be acknowledged, and all experimental claims will 
 
 ## Project Status
 
-**Status: Planning and Initial Development**
+**Status: Phase 1 complete**
 
-The current focus is dataset exploration, research review and establishing the initial processing pipeline.
+The repository includes dataset loading, validation, exploratory statistics and geographic visualisations.
 
 ---
 
