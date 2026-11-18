@@ -46,6 +46,17 @@ def _read(files, _metadata):
     return trip
 
 
+def inference_files(partition, directory):
+    files = TripFiles(partition, directory.name, directory)
+    if directory.is_symlink() or not directory.is_dir():
+        raise ApiError(404, "trip_not_found", "Trip unavailable")
+    for extension in INFERENCE_FILES:
+        path = files.path(extension)
+        if path.is_symlink() or not path.is_file():
+            raise ApiError(404, "trip_not_found", "Trip unavailable")
+    return files
+
+
 class InferenceService:
     def __init__(self, root, model_paths):
         self.root = root.resolve()
@@ -89,21 +100,14 @@ class InferenceService:
         if not isinstance(trip_id, str) or not TRIP_ID.fullmatch(trip_id):
             raise ApiError(422, "invalid_trip_id", "Invalid trip ID")
         directory = self.partition_dir(partition) / trip_id
-        files = TripFiles(partition, trip_id, directory)
-        if directory.is_symlink() or not directory.is_dir():
-            raise ApiError(404, "trip_not_found", "Trip unavailable")
-        for extension in INFERENCE_FILES:
-            path = files.path(extension)
-            if path.is_symlink() or not path.is_file():
-                raise ApiError(404, "trip_not_found", "Trip unavailable")
-        return files
+        return inference_files(partition, directory)
 
-    def summary(self, files):
+    def summary(self, files, *, description="Development trip"):
         track = files.path("track")
         stat = track.stat()
         return dict(partition=files.partition, trip_id=files.trip_id,
                     observation_count=_row_count(track, stat.st_mtime_ns, stat.st_size),
-                    description="Development trip")
+                    description=description)
 
     def trips(self, partition):
         summaries = []

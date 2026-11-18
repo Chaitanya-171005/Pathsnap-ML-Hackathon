@@ -18,9 +18,10 @@ from starlette.exceptions import HTTPException
 
 from frontend.models.phase5 import Phase5Result
 from frontend.models.schemas import Capabilities, Geometry, Health, PredictionJob, PredictionRequest
-from frontend.models.schemas import TripList, TripSummary
+from frontend.models.schemas import FINAL_PARTITION, TripList, TripSummary
 from src.decoding import MODELS
 
+from .final_evaluation import FinalEvaluation, FinalSettings, verify_freeze
 from .service import ApiError, InferenceService, MODES
 
 
@@ -45,7 +46,10 @@ def create_app(*, data_root=None, model_paths=None, timeout_s=None):
 
     @asynccontextmanager
     async def lifespan(application):
-        application.state.inference = InferenceService(root, model_paths)
+        settings = FinalSettings.from_env()
+        frozen = verify_freeze(ROOT, model_paths["phase3"]) if settings else None
+        service = application.state.inference = InferenceService(root, model_paths)
+        application.state.final_evaluation = FinalEvaluation(settings, service, *frozen) if settings else None
         application.state.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="pathsnap")
         application.state.prediction_slot = BoundedSemaphore(1)
         application.state.results = OrderedDict()
@@ -84,32 +88,59 @@ def create_app(*, data_root=None, model_paths=None, timeout_s=None):
                             status_code=500)
 
     @app.get("/health", response_model=Health)
-    def health():
+    def health(request: Request, response: Response):
+        response.headers["Cache-Control"] = "no-store"
         service = app.state.inference
-        ready = "phase3" in service.bundles and bool(service.partitions())
+        ready = "phase3" in service.bundles and bool(service.partitions() or final_access(request))
         return dict(status="ok" if ready else "degraded", version=VERSION)
 
+    def final_access(request):
+        final = app.state.final_evaluation
+        return final if final and final.settings.allows(request) else None
+
+    def require_final_access(request):
+        final = final_access(request)
+        if final is None:
+            raise ApiError(422, "invalid_partition", "Partition must be train or student_test")
+        return final
+
     @app.get("/api/v1/capabilities", response_model=Capabilities)
-    def capabilities():
-        return app.state.inference.capabilities()
+    def capabilities(request: Request, response: Response):
+        response.headers["Cache-Control"] = "no-store"
+        values = app.state.inference.capabilities()
+        if final_access(request):
+            values["partitions"].append(FINAL_PARTITION)
+        return values
 
     @app.get("/api/v1/trips", response_model=TripList)
-    def trips(partition: str):
+    def trips(request: Request, response: Response, partition: str):
+        if partition == FINAL_PARTITION:
+            final = require_final_access(request)
+            response.headers["Cache-Control"] = "no-store"
+            return dict(trips=final.trips())
         return dict(trips=app.state.inference.trips(partition))
 
     @app.get("/api/v1/trips/{trip_id}", response_model=TripSummary)
-    def trip(trip_id: str, partition: str):
+    def trip(request: Request, response: Response, trip_id: str, partition: str):
+        if partition == FINAL_PARTITION:
+            final = require_final_access(request)
+            response.headers["Cache-Control"] = "no-store"
+            return final.summary(final.files(trip_id))
         service = app.state.inference
         return service.summary(service.files(partition, trip_id))
 
     @app.get("/api/v1/trips/{trip_id}/geometry", response_model=Geometry)
-    def geometry(trip_id: str, partition: str):
+    def geometry(request: Request, trip_id: str, partition: str):
         service = app.state.inference
+        if partition == FINAL_PARTITION:
+            final = require_final_access(request)
+            return JSONResponse(service.geometry(final.files(trip_id)), headers={"Cache-Control": "no-store"})
         return JSONResponse(service.geometry(service.files(partition, trip_id)))
 
     @app.post("/api/v1/predictions", response_model=Phase5Result | PredictionJob)
-    async def predict(body: PredictionRequest):
-        if body.mode not in MODES:
+    async def predict(request: Request, body: PredictionRequest):
+        final = require_final_access(request) if body.partition == FINAL_PARTITION else None
+        if body.mode not in MODES or (final and body.mode != "hmm_viterbi"):
             raise ApiError(409, "mode_unavailable", "Prediction mode is unavailable")
         service = app.state.inference
         slot = app.state.prediction_slot
@@ -118,6 +149,10 @@ def create_app(*, data_root=None, model_paths=None, timeout_s=None):
         result_id = uuid4().hex
 
         def run():
+            if final:
+                payload = final.predict(final.files(body.trip_id), result_id)
+                return JSONResponse(payload, headers={"Cache-Control": "no-store",
+                                                      "X-Request-ID": result_id})
             files = service.files(body.partition, body.trip_id)
             return JSONResponse(service.predict(files, body.mode, result_id))
 

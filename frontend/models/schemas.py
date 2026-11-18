@@ -4,6 +4,8 @@ from pydantic import Field, model_validator
 from frontend.models.base import Coordinate, NonNegative, Probability, Schema, TripID
 from frontend.models.phase5 import Phase5Result
 
+FINAL_PARTITION = "evaluator_test"
+
 ModeID = Literal["phase3_fixed", "phase4_tuned", "hmm_viterbi", "demo_route"]
 
 
