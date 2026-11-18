@@ -1,0 +1,105 @@
+{
+  "final_cv": {
+    "candidate_rows": 650978,
+    "correct": 115796,
+    "eligible": 121721,
+    "log_loss": 0.05505955532528184,
+    "mrr": 0.9745566265710695,
+    "top1": 0.9513231077628347,
+    "top3": 0.9982665275507102,
+    "trip_macro_top1": 0.946494043576334,
+    "trips": 80
+  },
+  "final_params": {
+    "l2_regularization": 0.1833462779672531,
+    "learning_rate": 0.0946700463072859,
+    "max_depth": 8,
+    "max_iter": 241,
+    "max_leaf_nodes": 43,
+    "min_samples_leaf": 19
+  },
+  "final_trial": 3,
+  "nested_top1_difference": 0.000312189351056924,
+  "outer": [
+    {
+      "inner_top1": 0.9515562169521578,
+      "params": {
+        "l2_regularization": 5.45205555332169,
+        "learning_rate": 0.19987957182643154,
+        "max_depth": 8,
+        "max_iter": 274,
+        "max_leaf_nodes": 62,
+        "min_samples_leaf": 58
+      },
+      "study": "outer_01",
+      "trial": 5
+    },
+    {
+      "inner_top1": 0.9487063551871389,
+      "params": {
+        "l2_regularization": 0.44454730059366354,
+        "learning_rate": 0.14683332684412326,
+        "max_depth": null,
+        "max_iter": 212,
+        "max_leaf_nodes": 21,
+        "min_samples_leaf": 24
+      },
+      "study": "outer_02",
+      "trial": 6
+    },
+    {
+      "inner_top1": 0.9522825511864474,
+      "params": {
+        "l2_regularization": 0.047352206568409605,
+        "learning_rate": 0.18831479987708793,
+        "max_depth": 12,
+        "max_iter": 274,
+        "max_leaf_nodes": 46,
+        "min_samples_leaf": 57
+      },
+      "study": "outer_03",
+      "trial": 6
+    },
+    {
+      "inner_top1": 0.9504597011152887,
+      "params": {
+        "l2_regularization": 1.0,
+        "learning_rate": 0.1,
+        "max_depth": null,
+        "max_iter": 150,
+        "max_leaf_nodes": 31,
+        "min_samples_leaf": 30
+      },
+      "study": "outer_04",
+      "trial": 0
+    },
+    {
+      "inner_top1": 0.9521870255631694,
+      "params": {
+        "l2_regularization": 0.04976286976488985,
+        "learning_rate": 0.06851302635051287,
+        "max_depth": 12,
+        "max_iter": 254,
+        "max_leaf_nodes": 52,
+        "min_samples_leaf": 17
+      },
+      "study": "outer_05",
+      "trial": 4
+    }
+  ],
+  "paired_trip_interval": {
+    "lower": -0.00033479080019399,
+    "resamples": 10000,
+    "unit": "trip",
+    "upper": 0.0012285304127129114
+  },
+  "recommendation": "phase3",
+  "recommendation_rule": "Positive lower paired-trip interval and preserved trip-macro Top-1",
+  "source": "full_training_grouped_cv",
+  "tie_break": [
+    "pooled Top-1 descending",
+    "trip-macro Top-1 descending",
+    "candidate log loss ascending",
+    "canonical hyperparameters ascending"
+  ]
+}

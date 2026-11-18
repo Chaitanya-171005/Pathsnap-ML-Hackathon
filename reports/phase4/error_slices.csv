@@ -1,0 +1,17 @@
+baseline_top1,correct,difference,eligible,mrr,partition,slice,top1,top3,tuned_top1
+0.9533241599073001,,-9.656237929700495e-05,82848,,training_outer,distance_tie_within_0.05m,,,0.9532275975280031
+0.9728639300168422,,0.0004022020562579609,79562,,training_outer,reverse_geometry_signature_nearest_two,,,0.9732661320731002
+,,,0,,training_outer,duplicate_geometry_signature_nearest_two,,,
+0.6840321897501059,,0.018636171113934674,2361,,training_outer,near_parallel_signature_nearest_two,,,0.7026683608640406
+0.5664662658650634,,-0.010465375194834037,4491,,training_outer,heading_unavailable_on_nearest,,,0.5560008906702294
+0.7372340425531915,,-0.004255319148936176,940,,training_outer,speed_unavailable,,,0.7329787234042553
+,,,0,,training_outer,gap_over_30s,,,
+0.9375866536354751,,0.0005113985044434832,87994,,training_outer,four_or_more_candidates,,,0.9380980521399186
+,9594,,10018,0.97721862552168,student_test,distance_tie_within_0.05m,0.9576761828708324,0.9981034138550609,0.9576761828708324
+,9468,,9756,0.9841892168921689,student_test,reverse_geometry_signature_nearest_two,0.9704797047970479,0.9992824928249282,0.9704797047970479
+,0,,0,,student_test,duplicate_geometry_signature_nearest_two,,,
+,164,,233,0.8505007153075823,student_test,near_parallel_signature_nearest_two,0.703862660944206,1.0,0.703862660944206
+,122,,256,0.7137741815476191,student_test,heading_unavailable_on_nearest,0.4765625,0.94921875,0.4765625
+,8,,10,0.9,student_test,speed_unavailable,0.8,1.0,0.8
+,0,,0,,student_test,gap_over_30s,,,
+,8613,,9222,0.9650086232714729,student_test,four_or_more_candidates,0.9339622641509434,0.9978312730427239,0.9339622641509434
