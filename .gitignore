@@ -35,3 +35,8 @@ credentials*.json
 
 # Phase 3 estimators and per-candidate outputs.
 /artifacts/models/
+
+# Phase 5 per-observation predictions and route geometry.
+/data/decoding/
+*.pathsnap.json
+*.pathsnap.geojson
