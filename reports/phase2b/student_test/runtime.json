@@ -1,0 +1,16 @@
+{
+  "partition": "student_test",
+  "trips": 10,
+  "wall_s": 6.933268666965887,
+  "peak_process_rss_mib": 101.03125,
+  "platform": "darwin",
+  "python": "3.13.9",
+  "load_s": 0.518639330402948,
+  "alignment_s": 3.513859251863323,
+  "proposals_s": 2.0340192898875102,
+  "sequence_s": 0.3836502089397982,
+  "baseline_and_sequence_records_s": 0.8891351240454242,
+  "qualification_s": 0.18327729194425046,
+  "summaries_and_label_export_s": 0.6960746670374647,
+  "candidate_diagnostics_and_target_export_s": 2.191342374891974
+}

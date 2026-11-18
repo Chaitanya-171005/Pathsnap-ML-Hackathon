@@ -1,0 +1,16 @@
+{
+  "proposal_radius_m": 45.0,
+  "qualified_distance_m": 20.0,
+  "tie_margin_m": 0.05,
+  "anchor_margin": 3.0,
+  "qualified_margin": 3.0,
+  "max_heading_difference_deg": 75.0,
+  "heading_penalty": 18.0,
+  "match_reward": 32.0,
+  "skip_cost": 0.6,
+  "break_cost": 12.0,
+  "break_buffer_m": 12.0,
+  "max_gap_s": 30.0,
+  "max_speed_mps": 55.0,
+  "min_heading_step_m": 2.0
+}

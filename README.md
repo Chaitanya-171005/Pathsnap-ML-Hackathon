@@ -147,7 +147,7 @@ The technology stack may evolve based on implementation requirements and measure
 
 - [x] Dataset exploration, validation and visualisation
 - [x] Road-segment candidate generation and inference feature engineering
-- [ ] Reference-route alignment
+- [x] Reference-route alignment and qualified proxy labels
 - [ ] Baseline model implementation
 - [ ] Training and comparison of five ML models
 - [ ] Bayesian hyperparameter optimisation
@@ -198,6 +198,16 @@ python -m pytest -q
 
 The export command writes two tables under `data/candidates/<partition>/<trip_id>/`. The observation table includes empty candidate groups. The candidate table uses directed arc IDs and inference-time features. See the [Phase 2A handoff](docs/PHASE2A_HANDOFF.md) for schemas, benchmark results, and the investigation of trip `00000054`.
 
+### Phase 2B reference-route alignment
+
+```bash
+python -m src.alignment --partition train --plots
+python -m src.alignment --partition student_test --policy reports/phase2b/train/policy.json
+python -m pytest -q
+```
+
+Phase 2B compares nearest and sequence-aware alignment and applies qualification gates to derive observation-level proxy labels. Partition summaries are written to `reports/phase2b/` and observation-level files to the Git-ignored `data/alignments/`. See the [Phase 2B handoff](docs/PHASE2B_HANDOFF.md) for the feature and label join, results and limitations.
+
 ## Academic Integrity
 
 All model training, experimentation, evaluation and implementation will be conducted independently by the team.
@@ -206,9 +216,9 @@ Relevant research papers will be acknowledged, and all experimental claims will 
 
 ## Project Status
 
-**Status: Phase 2A complete**
+**Status: Phase 2B complete**
 
-The repository includes EDA, directed road candidate generation and inference-time features. Reference-route alignment is the next phase.
+The repository includes EDA, directed road candidates, inference features and qualified observation-level proxy labels. The next phase is classifier training.
 
 ---
 
