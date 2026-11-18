@@ -154,7 +154,7 @@ The technology stack may evolve based on implementation requirements and measure
 - [ ] HMM and Viterbi implementation
 - [ ] Classifier-only versus decoded-route evaluation
 - [ ] FastAPI backend development
-- [ ] User interface development
+- [x] User interface development (standalone Demo mode and proposed live API integration)
 - [ ] Two-laptop integration and testing
 - [ ] Technical report and final submission
 
@@ -235,7 +235,20 @@ Relevant research papers will be acknowledged, and all experimental claims will 
 
 ## Project Status
 
-**Status: Phase 4 complete**
+### Phase 6 frontend
+
+The standalone dashboard runs in Demo mode without models or raw datasets:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r frontend/requirements.txt
+.\.venv\Scripts\python.exe -m streamlit run frontend/app.py
+```
+
+See the [frontend setup](frontend/README.md), [UI handoff](docs/PHASE6_UI_HANDOFF.md), and [proposed API contract](docs/PHASE6_API_CONTRACT.md). Live mode uses `PATHSNAP_API_URL`; HMM decoding awaits backend integration. Model reports retain their proxy-label interpretation.
+
+**Status: Phase 6 frontend and Phase 5 output adapter complete; FastAPI connection pending**
+
+Phase 5 HMM/Viterbi is complete upstream. The UI accepts its [schema 1.0 outputs](docs/PHASE5_OUTPUT_CONTRACT.md), preserving separate directed route segments and the fixed Phase 3 classifier default. Decoder implementation remains on the backend.
 
 The repository includes EDA, directed candidates, inference features, qualified observation-level proxy labels, five classifier baselines, and a completed nested Bayesian tuning comparison. The paired training results support retaining the fixed Histogram Gradient Boosting baseline.
 
