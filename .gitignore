@@ -29,3 +29,6 @@ credentials*.json
 
 # Local Phase 2A per-observation exports.
 /data/candidates/
+
+# Local Phase 2B observation-level labels, joins and plots.
+/data/alignments/

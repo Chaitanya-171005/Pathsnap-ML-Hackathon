@@ -1,0 +1,16 @@
+{
+  "partition": "train",
+  "trips": 80,
+  "wall_s": 82.3465057919966,
+  "peak_process_rss_mib": 317.140625,
+  "platform": "darwin",
+  "python": "3.13.9",
+  "load_s": 10.941996204783209,
+  "alignment_s": 37.037888174992986,
+  "proposals_s": 23.327998126856983,
+  "sequence_s": 2.7755652480991557,
+  "baseline_and_sequence_records_s": 8.672390952240676,
+  "qualification_s": 1.9881645063869655,
+  "summaries_and_label_export_s": 9.097877165302634,
+  "candidate_diagnostics_and_target_export_s": 25.20988220977597
+}

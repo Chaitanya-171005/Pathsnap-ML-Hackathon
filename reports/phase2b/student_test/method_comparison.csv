@@ -1,0 +1,4 @@
+partition,first_method,second_method,both_proposed,same_proposed_arc,same_proposed_occurrence,both_accepted,same_accepted_arc,same_accepted_occurrence,first_only_accepted,second_only_accepted,different_proposed_arc,different_accepted_arc
+student_test,nearest,monotonic,18822,16791,15986,14918,14349,14349,452,3508,2031,569
+student_test,nearest,qualified,18822,16791,15986,11086,10892,10892,4284,2249,2031,194
+student_test,monotonic,qualified,18822,18822,18822,13335,13335,13335,5091,0,0,0
