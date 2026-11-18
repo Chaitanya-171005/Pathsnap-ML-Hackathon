@@ -150,7 +150,7 @@ The technology stack may evolve based on implementation requirements and measure
 - [x] Reference-route alignment and qualified proxy labels
 - [x] Baseline model implementation
 - [x] Training and comparison of five ML models
-- [ ] Bayesian hyperparameter optimisation
+- [x] Bayesian hyperparameter optimisation
 - [ ] HMM and Viterbi implementation
 - [ ] Classifier-only versus decoded-route evaluation
 - [ ] FastAPI backend development
@@ -218,6 +218,15 @@ python -m pytest -q
 
 The alignment command recreates local training targets if needed. The full experiment runs the same five trip-grouped folds for all classifiers, selects on training out-of-fold proxy agreement and then runs the held-out student-testing evaluation. Aggregate results are under `reports/phase3/`. Fitted pipelines and resumable checkpoints are under the Git-ignored `artifacts/models/phase3/`. See the [Phase 3 handoff](docs/PHASE3_HANDOFF.md).
 
+### Phase 4 Bayesian hyperparameter optimisation
+
+```bash
+python -m src.tuning --outer-trials 8 --final-trials 12 --workers 4 --batch-size 8192
+python -m pytest -q
+```
+
+Phase 4 evaluates tuning on nested trip-grouped validation and selects the final configuration using a separate training-only search. Aggregate results are under `reports/phase4/`. The frozen model and resumable journals are under `artifacts/models/phase4/`. See the [Phase 4 handoff](docs/PHASE4_HANDOFF.md) for the search protocol and model loading.
+
 ## Academic Integrity
 
 All model training, experimentation, evaluation and implementation will be conducted independently by the team.
@@ -226,9 +235,9 @@ Relevant research papers will be acknowledged, and all experimental claims will 
 
 ## Project Status
 
-**Status: Phase 3 complete**
+**Status: Phase 4 complete**
 
-The repository includes EDA, directed candidates, inference features, qualified observation-level proxy labels, and five trained and compared classifier baselines.
+The repository includes EDA, directed candidates, inference features, qualified observation-level proxy labels, five classifier baselines, and a completed nested Bayesian tuning comparison. The paired training results support retaining the fixed Histogram Gradient Boosting baseline.
 
 ---
 

@@ -1,0 +1,14 @@
+{
+  "baseline_source": "phase3_verified_checkpoints",
+  "fold_overlap": "All group checks passed",
+  "frozen_model_sha256": "73fa55ce64bb7cb75fd91dbb68aa3444238b668324e7ce9572ee8bba0712110c",
+  "inner_fit_count": 180,
+  "manifest_sha256": "f66a18364c7546dbb446975d416845545db7ea3e7caf10f0b7f5f3f2867876b6",
+  "paired_outer_groups": 121721,
+  "reload_probe_rows": 1024,
+  "reload_probe_sha256": "7513edb4496ac855a2c8daf93f29f1720eb2b4b6730a86ff6c637e0352777083",
+  "student_data_digest": "7ad28d62305385dcf90cf781d401897324dd04eb77a2e131c52306a4326cec2d",
+  "student_evaluation_saved": true,
+  "trial_record_count": 52,
+  "trial_sequence": "Sequential deterministic proposals from seed, study ID, trial number and completed history"
+}
