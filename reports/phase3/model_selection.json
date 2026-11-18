@@ -1,0 +1,18 @@
+{
+  "policy_id": "91b3c862ebe5388235c7a574ed4ed46a5a37782ac872eb9273abda850317e758",
+  "ranked_models": [
+    "gradient_boosting",
+    "decision_tree",
+    "random_forest",
+    "knn",
+    "logistic_regression"
+  ],
+  "selected": "gradient_boosting",
+  "source": "training_grouped_oof",
+  "tie_break": [
+    "observation-weighted Top-1 descending",
+    "trip-macro Top-1 descending",
+    "candidate log loss ascending",
+    "model identifier ascending"
+  ]
+}
