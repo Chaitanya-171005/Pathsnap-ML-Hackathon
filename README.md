@@ -146,8 +146,8 @@ The technology stack may evolve based on implementation requirements and measure
 ## Project Roadmap
 
 - [x] Dataset exploration, validation and visualisation
-- [ ] Data preprocessing and candidate generation
-- [ ] Feature engineering and reference-route alignment
+- [x] Road-segment candidate generation and inference feature engineering
+- [ ] Reference-route alignment
 - [ ] Baseline model implementation
 - [ ] Training and comparison of five ML models
 - [ ] Bayesian hyperparameter optimisation
@@ -174,7 +174,7 @@ All reported metrics and visualisations will be generated from actual experiment
 
 ## Installation and Execution
 
-Phase 1 uses Python 3.13. Obtain the original organiser dataset separately and put the trip folders in `data/raw/train/` and `data/raw/student_test/`. Keep all four files for each trip in its own zero-padded trip directory.
+PathSnap uses Python 3.13. Obtain the original organiser dataset separately and put the trip folders in `data/raw/train/` and `data/raw/student_test/`. Keep all four files for each trip in its own zero-padded trip directory.
 
 ```bash
 python3.13 -m venv .venv
@@ -188,6 +188,16 @@ The EDA command writes CSV and Markdown reports to `reports/eda/` and PNG plots 
 
 See the [Phase 1 handoff](docs/PHASE1_HANDOFF.md), [dataset schema](docs/DATASET_SCHEMA.md), [EDA findings](docs/EDA_FINDINGS.md) and [data contract](docs/DATA_CONTRACT.md).
 
+### Phase 2A candidate generation
+
+```bash
+python -m src.candidates --partition train --trip-id 00000083 --radius-m 50 --top-k 8
+python -m src.candidates.benchmark
+python -m pytest -q
+```
+
+The export command writes two tables under `data/candidates/<partition>/<trip_id>/`. The observation table includes empty candidate groups. The candidate table uses directed arc IDs and inference-time features. See the [Phase 2A handoff](docs/PHASE2A_HANDOFF.md) for schemas, benchmark results, and the investigation of trip `00000054`.
+
 ## Academic Integrity
 
 All model training, experimentation, evaluation and implementation will be conducted independently by the team.
@@ -196,9 +206,9 @@ Relevant research papers will be acknowledged, and all experimental claims will 
 
 ## Project Status
 
-**Status: Phase 1 complete**
+**Status: Phase 2A complete**
 
-The repository includes dataset loading, validation, exploratory statistics and geographic visualisations.
+The repository includes EDA, directed road candidate generation and inference-time features. Reference-route alignment is the next phase.
 
 ---
 

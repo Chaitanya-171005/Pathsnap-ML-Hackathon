@@ -26,3 +26,6 @@ credentials*.json
 /reports/eda/reference_routes.csv
 /visualizations/eda/*.html
 /visualizations/eda/07_training_trajectories.png
+
+# Local Phase 2A per-observation exports.
+/data/candidates/

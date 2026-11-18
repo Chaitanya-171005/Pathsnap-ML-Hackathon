@@ -1,0 +1,23 @@
+{
+  "trip_id": "00000054",
+  "gps_rows": 19313,
+  "reference_arcs": 422,
+  "reference_directed_breaks": 0,
+  "reference_arc_sum_m": 31362.956478246248,
+  "gps_first_to_reference_start_m": 21.018309733649968,
+  "gps_last_to_reference_end_m": 22.12202304627306,
+  "closest_to_ref_end_observation_id": 2702,
+  "closest_to_ref_end_distance_m": 7.421519012962859,
+  "off_reference_gt_100_m": 16156,
+  "off_reference_with_road_within_25_m": 0,
+  "off_reference_with_road_within_50_m": 65,
+  "off_reference_with_road_within_100_m": 15122,
+  "tail_start_observation_id": 2703,
+  "tail_gps_rows": 16610,
+  "tail_off_reference_gt_100_m": 16156,
+  "tail_duration_s": 16656.0,
+  "tail_max_radius_from_reference_end_m": 240.77688551969624,
+  "tail_path_m": 126484.28286876004,
+  "tail_step_median_m": 7.06480965104665,
+  "tail_net_displacement_m": 7.4536314808324935
+}
