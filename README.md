@@ -148,8 +148,8 @@ The technology stack may evolve based on implementation requirements and measure
 - [x] Dataset exploration, validation and visualisation
 - [x] Road-segment candidate generation and inference feature engineering
 - [x] Reference-route alignment and qualified proxy labels
-- [ ] Baseline model implementation
-- [ ] Training and comparison of five ML models
+- [x] Baseline model implementation
+- [x] Training and comparison of five ML models
 - [ ] Bayesian hyperparameter optimisation
 - [ ] HMM and Viterbi implementation
 - [ ] Classifier-only versus decoded-route evaluation
@@ -208,6 +208,16 @@ python -m pytest -q
 
 Phase 2B compares nearest and sequence-aware alignment and applies qualification gates to derive observation-level proxy labels. Partition summaries are written to `reports/phase2b/` and observation-level files to the Git-ignored `data/alignments/`. See the [Phase 2B handoff](docs/PHASE2B_HANDOFF.md) for the feature and label join, results and limitations.
 
+### Phase 3 grouped classifier comparison
+
+```bash
+python -m src.alignment --partition train --policy reports/phase2b/train/policy.json
+python -m src.models --workers 4 --batch-size 8192
+python -m pytest -q
+```
+
+The alignment command recreates local training targets if needed. The full experiment runs the same five trip-grouped folds for all classifiers, selects on training out-of-fold proxy agreement and then runs the held-out student-testing evaluation. Aggregate results are under `reports/phase3/`. Fitted pipelines and resumable checkpoints are under the Git-ignored `artifacts/models/phase3/`. See the [Phase 3 handoff](docs/PHASE3_HANDOFF.md).
+
 ## Academic Integrity
 
 All model training, experimentation, evaluation and implementation will be conducted independently by the team.
@@ -216,9 +226,9 @@ Relevant research papers will be acknowledged, and all experimental claims will 
 
 ## Project Status
 
-**Status: Phase 2B complete**
+**Status: Phase 3 complete**
 
-The repository includes EDA, directed road candidates, inference features and qualified observation-level proxy labels. The next phase is classifier training.
+The repository includes EDA, directed candidates, inference features, qualified observation-level proxy labels, and five trained and compared classifier baselines.
 
 ---
 

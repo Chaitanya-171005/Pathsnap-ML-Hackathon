@@ -1,0 +1,3 @@
+partition,trips,original,qualified,eligible,misses,unqualified,candidate_rows,positives,negatives,proxy_label_coverage,candidate_recall
+train,80,208417,121855,121721,134,86562,650978,121721,529257,0.5846691968505449,0.9989003323622339
+student_test,10,19160,13335,13325,10,5825,72321,13325,58996,0.6959812108559499,0.9992500937382827

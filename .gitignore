@@ -32,3 +32,6 @@ credentials*.json
 
 # Local Phase 2B observation-level labels, joins and plots.
 /data/alignments/
+
+# Phase 3 estimators and per-candidate outputs.
+/artifacts/models/
