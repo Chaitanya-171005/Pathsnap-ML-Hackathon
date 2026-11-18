@@ -1,4 +1,4 @@
-"""Offline-only Phase 2B proxy and supplied-route evaluation."""
+"""Post-inference Phase 2B proxy and supplied-route evaluation."""
 
 from collections import Counter
 from itertools import pairwise
@@ -49,6 +49,21 @@ def add_rates(row):
     return row
 
 
+def route_continuity(result, graph):
+    segments = result["route_segments"]
+    arcs = graph.arcs
+    return {
+        "segments": len(segments),
+        "predicted_segment_breaks": max(0, len(segments) - 1),
+        "predicted_internal_disconnections": sum(
+            arcs[a].end != arcs[b].start for segment in segments for a, b in pairwise(segment["arc_ids"])
+        ),
+        "no_feasible_transitions": sum(result["break_counts"].get(reason, 0) for reason in
+                                       ("no_feasible_transition", "movement_limit",
+                                        "routing_budget_exceeded")),
+    }
+
+
 def route_metrics(result, graph, reference):
     segments = result["route_segments"]
     predicted = [arc_id for segment in segments for arc_id in segment["arc_ids"]]
@@ -66,8 +81,6 @@ def route_metrics(result, graph, reference):
             disconnected += 1
         else:
             reference_pairs[a, b] += 1
-    internal_disconnections = sum(arcs[a].end != arcs[b].start for s in segments
-                                  for a, b in pairwise(s["arc_ids"]))
     baseline_ids = []
     baseline_pairs = Counter()
     baseline_disconnections = 0
@@ -90,8 +103,9 @@ def route_metrics(result, graph, reference):
     baseline_overlap = len(baseline_unique & set(valid))
     predicted_length = sum(arcs[arc_id].length_m for arc_id in predicted)
     reference_length = sum(arcs[arc_id].length_m for arc_id in valid)
+    continuity = route_continuity(result, graph)
     return {
-        "route_status": result["status"], "segments": len(segments),
+        "route_status": result["status"], "segments": continuity.pop("segments"),
         "predicted_arc_occurrences": len(predicted), "reference_arc_occurrences": len(reference),
         "reference_invalid_occurrences": len(reference) - len(valid),
         "predicted_unique_arcs": len(set(predicted)), "reference_valid_unique_arcs": len(set(valid)),
@@ -99,11 +113,7 @@ def route_metrics(result, graph, reference):
         "arc_recall": ratio(len(overlap), len(set(valid))),
         "directed_bigram_f1": ratio(2 * (predicted_pairs & reference_pairs).total(),
                                     predicted_pairs.total() + reference_pairs.total()),
-        "predicted_segment_breaks": max(0, len(segments) - 1),
-        "predicted_internal_disconnections": internal_disconnections,
-        "no_feasible_transitions": sum(result["break_counts"].get(reason, 0) for reason in
-                                       ("no_feasible_transition", "movement_limit",
-                                        "routing_budget_exceeded")),
+        **continuity,
         "reference_disconnected_transitions": disconnected,
         "reference_uncheckable_transitions": uncheckable,
         "predicted_full_arc_length_m": predicted_length,
@@ -118,15 +128,20 @@ def route_metrics(result, graph, reference):
     }
 
 
+def score_reference(files, trip, run, reference, issues, policy, *, align=align_trip):
+    source = Trip(files, trip.track, trip.nodes, trip.arcs, reference, list(trip.issues) + issues)
+    labels = align(source, policy)["qualified"]
+    key = dict(partition=trip.partition, trip_id=trip.trip_id)
+    observations = add_rates({**key, **observation_metrics(run.result, run.candidate_ids, labels)})
+    route = {**key, **route_metrics(run.result, run.graph, reference)}
+    return observations, route
+
+
 def evaluate_trip(files, trip, run, policy):
     reference, issues = load_route(files.path("route"))
     if any(issue.code in ("missing_file", "unreadable_file") for issue in issues):
         raise ValueError(f"Reference route unavailable for {files.partition}/{files.trip_id}")
-    source = Trip(files, trip.track, trip.nodes, trip.arcs, reference, list(trip.issues) + issues)
-    labels = align_trip(source, policy)["qualified"]
-    key = dict(partition=trip.partition, trip_id=trip.trip_id)
-    observations = add_rates({**key, **observation_metrics(run.result, run.candidate_ids, labels)})
-    route = {**key, **route_metrics(run.result, run.graph, reference)}
+    observations, route = score_reference(files, trip, run, reference, issues, policy)
     difficult_details = {"break_counts": run.result["break_counts"]}
     if (trip.partition, trip.trip_id) == ("train", "00000054") and len(reference):
         end_arc = run.graph.arcs.get(int(reference[-1]))

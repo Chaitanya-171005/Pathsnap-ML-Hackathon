@@ -141,6 +141,13 @@ def align_trip(trip: Trip, policy: AlignmentPolicy, timings: dict | None = None
     """Produce all three methods for every original GPS row in trip order."""
     if trip.files.partition not in ("train", "student_test"):
         raise ValueError("Alignment accepts only training and student-testing trips")
+
+    return _align_trip(trip, policy, timings)
+
+
+def _align_trip(trip: Trip, policy: AlignmentPolicy, timings: dict | None = None
+                ) -> dict[str, list[LabelRecord]]:
+    """Shared alignment for authorised post-inference scoring."""
     started = perf_counter()
     policy_id = policy.policy_id
     valid = validate_trip(trip)

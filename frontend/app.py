@@ -37,12 +37,16 @@ def main():
         st.divider()
         mode = st.segmented_control("Data source", ["Demo", "Live"], default="Demo", key="data_source")
         mode = mode or "Demo"
-    namespace = (mode, config.api_url, config.timeout)
+    namespace = (mode, config.api_url, config.timeout, bool(config.final_token))
     if st.session_state.get("client_namespace") != namespace:
         st.session_state.client_namespace = namespace
-        for key in ("prediction_result", "prediction_request", "pending_job", "connection_snapshot", "health_latency_ms", "service_cache"):
+        for key in ("prediction_result", "prediction_request", "pending_job", "final_auto_request", "connection_snapshot", "health_latency_ms", "service_cache"):
             st.session_state.pop(key, None)
-        st.session_state.client = MockPathSnapClient() if mode == "Demo" else (HttpPathSnapClient(config.api_url, config.timeout) if config.api_url else None)
+        st.session_state.client = (
+            MockPathSnapClient() if mode == "Demo" else
+            HttpPathSnapClient(config.api_url, config.timeout, final_token=config.final_token)
+            if config.api_url else None
+        )
     client = st.session_state.client
     snapshot = st.session_state.get("connection_snapshot")
     if snapshot is None or time.monotonic() - snapshot[0] > 30:

@@ -2,9 +2,10 @@
 from dataclasses import dataclass
 from time import perf_counter
 from typing import Protocol
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 import requests
 from pydantic import ValidationError
+from frontend.config import private_evaluation_host
 from frontend.models.schemas import (
     Capabilities, Geometry, Health, PredictionJob, PredictionRequest, TripList, TripSummary,
 )
@@ -35,17 +36,24 @@ class PathSnapClient(Protocol):
 
 
 class HttpPathSnapClient:
-    def __init__(self, base_url: str, timeout: float = 15, session=None):
+    def __init__(self, base_url: str, timeout: float = 15, session=None, *, final_token=""):
         if not base_url:
             raise ClientError("Set PATHSNAP_API_URL before selecting Live mode.")
+        if final_token and not private_evaluation_host(urlsplit(base_url).hostname):
+            raise ClientError("Final evaluation requires a private IPv4 API URL.")
+        self.final_token = final_token
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self.session = session or requests.Session()
+        if final_token and session is None:
+            self.session.trust_env = False
         self.last_request = RequestStatus()
 
     def _request(self, method, path, schema, *, parser=None, **kwargs):
         start = perf_counter()
         self.last_request = RequestStatus(endpoint=f"{method} {path}", status="Running")
+        if self.final_token:
+            kwargs.update(headers={"Authorization": f"Bearer {self.final_token}"}, allow_redirects=False)
         try:
             response = self.session.request(method, self.base_url + path, timeout=self.timeout, **kwargs)
             response.raise_for_status()

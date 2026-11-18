@@ -1,5 +1,5 @@
 import streamlit as st
-from frontend.models.schemas import PredictionRequest
+from frontend.models.schemas import FINAL_PARTITION, PredictionRequest
 from frontend.services.api_client import ClientError
 from frontend.components.metric_cards import header, metric_cards
 from frontend.components.navigation import fetch_cached, trip_selector, mode_selector
@@ -17,12 +17,28 @@ def render(ctx):
     if not ctx["caps"]:
         st.info("Connect a backend or select Demo mode to run predictions.")
         return
-    selected = trip_selector(ctx["client"], ctx["caps"], ctx["namespace"], "prediction")
-    mode = mode_selector(ctx["caps"])
-    if not selected or not mode:
+    selected = trip_selector(ctx["client"], ctx["caps"], ctx["namespace"], "prediction",
+                             explicit_final_selection=True)
+    if not selected:
+        st.session_state.pop("final_auto_request", None)
+        return
+    final = selected[0] == FINAL_PARTITION
+    mode = "hmm_viterbi" if final else mode_selector(ctx["caps"])
+    if not mode:
         return
     request = PredictionRequest(partition=selected[0], trip_id=selected[1], mode=mode)
-    if st.button("Run Prediction", type="primary", disabled=bool(st.session_state.get("pending_job"))):
+    pending_job = bool(st.session_state.get("pending_job"))
+    if final:
+        st.caption("Final evaluation · frozen HMM / Viterbi")
+        auto_run = not pending_job and st.session_state.get("final_auto_request") != request
+        run_clicked = st.button("Run Again", disabled=pending_job)
+        if auto_run or run_clicked:
+            st.session_state.final_auto_request = request
+    else:
+        st.session_state.pop("final_auto_request", None)
+        auto_run = False
+        run_clicked = st.button("Run Prediction", type="primary", disabled=pending_job)
+    if auto_run or run_clicked:
         st.session_state.pop("prediction_result", None)
         st.session_state.pop("prediction_request", None)
         with st.status("Submitting prediction…", expanded=True) as status:
@@ -93,7 +109,12 @@ def render(ctx):
     st.subheader("Backend metrics")
     for label, values in (("Route continuity", result.continuity_metrics), ("Permitted evaluation", result.evaluation_metrics)):
         st.write(f"**{label}**")
-        st.json(values) if values else st.caption("Not available")
+        if values:
+            st.json(values)
+        elif final and label == "Permitted evaluation":
+            st.caption("Score pending organiser confirmation or unavailable for this reference.")
+        else:
+            st.caption("Not available")
     st.download_button("Download validated result JSON", result.model_dump_json(indent=2), file_name=f"pathsnap-{result.trip_id}.json", mime="application/json")
     if result.phase5:
         st.download_button("Download Phase 5 JSON", result.phase5.model_dump_json(indent=2, exclude_unset=True),

@@ -1,5 +1,6 @@
 """Selection and fetch helpers shared by explorer and prediction pages."""
 import streamlit as st
+from frontend.models.schemas import FINAL_PARTITION
 from frontend.services.api_client import ClientError
 
 
@@ -21,7 +22,7 @@ def fetch_cached(client, namespace, kind, *args):
     return cache[key][1]
 
 
-def trip_selector(client, caps, namespace, key):
+def trip_selector(client, caps, namespace, key, *, explicit_final_selection=False):
     if not caps.partitions:
         st.info("No trip partitions are exposed by the backend.")
         return None
@@ -32,7 +33,11 @@ def trip_selector(client, caps, namespace, key):
     if not trips:
         st.info("No trips available in this partition.")
         return None
-    trip_id = right.selectbox("Trip ID", [t.trip_id for t in trips], key=f"{key}-trip")
+    explicit = explicit_final_selection and partition == FINAL_PARTITION
+    trip_id = right.selectbox("Trip ID", [t.trip_id for t in trips], index=None if explicit else 0,
+                             key=f"{key}-final-trip" if explicit else f"{key}-trip")
+    if trip_id is None:
+        return None
     return partition, trip_id
 
 

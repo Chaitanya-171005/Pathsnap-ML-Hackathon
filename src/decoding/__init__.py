@@ -95,6 +95,12 @@ def decode_trip(trip, bundle, *, model=DEFAULT_MODEL, config=DecoderConfig(), ba
     """Decode one loaded inference trip. The returned result is JSON-ready."""
     if trip.partition not in PARTITIONS:
         raise ValueError("Only train and student_test are supported in Phase 5")
+
+    return _decode_trip(trip, bundle, model=model, config=config, batch_size=batch_size)
+
+
+def _decode_trip(trip, bundle, *, model=DEFAULT_MODEL, config=DecoderConfig(), batch_size=8192):
+    """Shared decoder for entry points that have already validated the partition."""
     if batch_size < 1:
         raise ValueError("Prediction batch size must be positive")
     started = perf_counter()
